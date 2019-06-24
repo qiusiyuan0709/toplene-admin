@@ -36,6 +36,7 @@
 
 <script>
 import axios from 'axios'
+import '@/vendor/gt' // gt.js 会像全局 window 暴露一个函数initGeetest
 
 export default {
   name: 'AppLogin',
@@ -57,7 +58,7 @@ export default {
         method: 'GET',
         url: `http://ttapi.research.itcast.cn/mp/v1_0/captchas/${mobile}`
       }).then(res => {
-        console.log(this.res)
+        console.log(res.data)
       })
     }
   }
