@@ -1,3 +1,7 @@
+/* eslint-disable handle-callback-err */
+/* eslint-disable handle-callback-err */
+/* eslint-disable handle-callback-err */
+/* eslint-disable handle-callback-err */
 <template>
   <div class="login-wrap">
     <div class="login-form-wrap">
@@ -6,13 +10,18 @@
              alt="黑马头条">
       </div>
       <div class="login-form">
-        <el-form ref="form"
-                 :model="form">
-          <el-form-item>
+        <!-- 表单验证：
+        rules  配置验证规则
+        将需要验证的字段通过 prop配置到 el-form-item 上
+        ref  获取表单的组件，可以手动调用表单组件的验证方法 -->
+        <el-form ref="ruleForm"
+                 :model="form"
+                 :rules="rules">
+          <el-form-item prop='mobile'>
             <el-input v-model="form.mobile"
                       placeholder="手机号"></el-input>
           </el-form-item>
-          <el-form-item>
+          <el-form-item prop='code'>
             <!-- 支持栅格布局 -->
             <el-col :span="10">
               <el-input v-model="form.code"
@@ -26,7 +35,7 @@
           <el-form-item>
             <el-button class="btn-login"
                        type="primary"
-                       @click="onSubmit">登录</el-button>
+                       @click="handleLogin">登录</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -45,12 +54,49 @@ export default {
         mobile: '17683753439',
         code: ''
       },
+      rules: {
+        mobile: [
+          { required: true, message: '请输入手机号', trigger: 'blur' },
+          { len: 11, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+        ],
+        code: [
+          { required: true, message: '请输入验证码', trigger: 'blur' },
+          { len: 6, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+        ]
+      },
       captchaObj: null // 通过 initGeetest 得到极验验证码对象
     }
   },
   methods: {
-    onSubmit () {
-      console.log('submit!')
+    handleLogin () {
+      this.$refs['ruleForm'].validate(valid => {
+        if (!valid) {
+          return
+        }
+        this.login()
+      })
+    },
+    login () {
+      axios({
+        method: 'POST',
+        url: 'https://mock.boxuegu.com/mock/434/v1_0/authorizations',
+        data: this.form
+      }).then(res => { // >= 200 < 400 的状态码都会进入这里
+        // Element 提供的 Message 消息提示组件，这也是组件调用的一种方式
+        this.$message({
+          message: '登录成功',
+          type: 'success'
+        })
+        // 建议路由跳转都是用 name 去跳转，路由传参非常方便
+        this.$router.push({
+          name: 'home'
+        })
+      })
+        .catch(err => { // >= 400 的 HTTP状态吗都会进入 catch 中
+          if (err.response.status === 400) {
+            this.$message.error('登陆失败，手机号或验证码错误')
+          }
+        })
     },
     handleSendCode () {
       const { mobile } = this.form
