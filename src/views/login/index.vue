@@ -35,7 +35,8 @@
           <el-form-item>
             <el-button class="btn-login"
                        type="primary"
-                       @click="handleLogin">登录</el-button>
+                       @click="handleLogin"
+                       :loading="loginLoading">登录</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -50,18 +51,19 @@ export default {
   name: 'AppLogin',
   data () {
     return {
-      form: {
+      form: { // 表单数据
         mobile: '17683753439',
         code: ''
       },
+      loginLoading: false, // 登录按钮的 loading 状态
       rules: {
         mobile: [
           { required: true, message: '请输入手机号', trigger: 'blur' },
-          { len: 11, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          { len: 11, message: '长度在 11 个字符', trigger: 'blur' }
         ],
         code: [
           { required: true, message: '请输入验证码', trigger: 'blur' },
-          { len: 6, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          { len: 6, message: '长度在 6 个字符', trigger: 'blur' }
         ]
       },
       captchaObj: null // 通过 initGeetest 得到极验验证码对象
@@ -73,13 +75,15 @@ export default {
         if (!valid) {
           return
         }
-        this.login()
+        // 表单验证通过，提交登录
+        this.submitLogin()
       })
     },
-    login () {
+    submitLogin () {
+      this.loginLoading = true
       axios({
         method: 'POST',
-        url: 'https://mock.boxuegu.com/mock/434/v1_0/authorizations',
+        url: 'http://ttapi.research.itcast.cn/mp/v1_0/authorizations',
         data: this.form
       }).then(res => { // >= 200 < 400 的状态码都会进入这里
         // Element 提供的 Message 消息提示组件，这也是组件调用的一种方式
@@ -87,6 +91,9 @@ export default {
           message: '登录成功',
           type: 'success'
         })
+
+        this.loginLoading = false
+
         // 建议路由跳转都是用 name 去跳转，路由传参非常方便
         this.$router.push({
           name: 'home'
@@ -96,6 +103,7 @@ export default {
           if (err.response.status === 400) {
             this.$message.error('登陆失败，手机号或验证码错误')
           }
+          this.loginLoading = false
         })
     },
     handleSendCode () {
