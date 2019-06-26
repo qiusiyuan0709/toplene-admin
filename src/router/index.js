@@ -6,14 +6,21 @@ Vue.use(Router)
 
 const router = new Router({
   routes: [{
-    name: 'home',
-    path: '/',
-    component: () => import('@/views/home')
-  },
-  {
+
     name: 'layout',
-    path: '/layout',
-    component: () => import('@/views/layout')
+    path: '/',
+    component: () => import('@/views/layout'),
+    children: [{
+      name: 'home',
+      path: '', // 它就是 layout 的默认子路由
+      component: () => import('@/views/home')
+    },
+    {
+      name: 'publish',
+      path: '/publish', // 它就是 layout 的默认子路由
+      component: () => import('@/views/publish')
+    }
+    ]
   },
   {
     name: 'login',
