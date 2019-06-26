@@ -83,7 +83,8 @@ export default {
       },
       captchaObj: null, // 通过 initGeetest 得到极验验证码对象
       codeSecons: initCodeSeconds, // 倒计时的时间
-      codeTimer: null // 倒计时定时器
+      codeTimer: null, // 倒计时定时器
+      sendMobile: '' // 保存初始化  验证码之后发送短信的手机号
     }
   },
   methods: {
@@ -130,21 +131,38 @@ export default {
         if (errorMessage.trim().length > 0) {
           return
         }
-        // 手机号码有效 初始化验证码插件
-        this.showGeetest()
+
+        // 手机号码验证通过
+        // 验证是否有验证码插件对象
+        if (this.captchaObj) {
+          // 手机号码有效 初始化验证码插件
+          // this.showGeetest()
+          // 如果用户输入的手机号和之前初始化的验证码手机号不一致，就基于当前手机号码重新初始化
+          // 否则直接 verify 显示
+          if (this.form.mobile !== this.sendMobile) {
+            // 手机号码发生改变，重新初始化验证码插件
+            // 重新初始化之前，将原来的验证码插件 DOM 删除
+            document.body.removeChild(document.querySelector('.geetest_panel'))
+
+            // 重新初始化
+            this.showGeetest()
+          } else {
+            // 一致，直接 verify
+            this.captchaObj.verify()
+          }
+        } else {
+          // 这里是第 1 次初始化验证码插件
+          this.showGeetest()
+        }
       })
     },
 
     showGeetest () {
-      const { mobile } = this.form
-
-      if (this.captchaObj) {
-        return this.captchaObj.verify()
-      }
+      // const { mobile } = this.form
 
       axios({
         method: 'GET',
-        url: `http://ttapi.research.itcast.cn/mp/v1_0/captchas/${mobile}`
+        url: `http://ttapi.research.itcast.cn/mp/v1_0/captchas/${this.form.mobile}`
       }).then(res => {
         const data = res.data.data
         window.initGeetest({
@@ -158,6 +176,8 @@ export default {
           this.captchaObj = captchaObj
           // 这里可以调用验证实例 captchaObj 的实例方法
           captchaObj.onReady(() => {
+            // 只有 ready 了才能显示验证码
+            this.sendMobile = this.form.mobile
             captchaObj.verify()
           }).onSuccess(() => {
             const {
@@ -168,7 +188,7 @@ export default {
             //  调用 获取短信验证码（极验 API2）接口， 发送短信
             axios({
               method: '',
-              url: `http://ttapi.research.itcast.cn/mp/v1_0/sms/codes/${mobile}`,
+              url: `http://ttapi.research.itcast.cn/mp/v1_0/sms/codes/${this.form.mobile}`,
               params: {
                 challenge,
                 seccode,
