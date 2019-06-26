@@ -36,6 +36,7 @@
               </el-button>
             </el-col>
           </el-form-item>
+
           <el-form-item prop="agree">
             <el-checkbox v-model="form.agree"></el-checkbox>
             <span>我已阅读并同意<a href="#">用户协议</a>和<a href="#">隐私条款</a></span>

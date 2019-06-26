@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-// import nprogress from 'nprogress'
+import nprogress from 'nprogress'
 
 Vue.use(Router)
 
@@ -11,6 +11,11 @@ const router = new Router({
     component: () => import('@/views/home')
   },
   {
+    name: 'layout',
+    path: '/layout',
+    component: () => import('@/views/layout')
+  },
+  {
     name: 'login',
     path: '/login',
     component: () => import('@/views/login')
@@ -18,11 +23,12 @@ const router = new Router({
   ]
 })
 
-// router.beforeEach((to, from, next) => {
-//   nprogress.start()
-// })
+router.beforeEach((to, from, next) => {
+  nprogress.start()
+  next()
+})
 
-// router.afterEach((to, from) => {
-//   nprogress.down()
-// })
+router.afterEach((to, from) => {
+  nprogress.down()
+})
 export default router
