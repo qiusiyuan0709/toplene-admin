@@ -19,6 +19,11 @@ const router = new Router({
       name: 'publish',
       path: '/publish', // 它就是 layout 的默认子路由
       component: () => import('@/views/publish')
+    },
+    {
+      name: 'article-list',
+      path: '/article', // 它就是 layout 的默认子路由
+      component: () => import('@/views/article')
     }
     ]
   },
