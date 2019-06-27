@@ -19,6 +19,29 @@ Vue.prototype.$http = axios
 Vue.use(ElementUI)
 Vue.config.productionTip = false
 
+/**
+ * Axios 请求拦截器
+ * 所有使用的 axios 发送的请求都要经过这里
+ * config 是本次请求相关的配置对象
+ * return config 就是允许通过的方式
+ */
+axios.interceptors.request.use(config => {
+  const userInfo = JSON.parse(window.localStorage.getItem('user_info'))
+  config.header.Authorization = `Bearer ${userInfo.token}`
+  return config
+}, error => {
+  return Promise.reject(error)
+})
+
+/**
+ * Axios 响应拦截器
+ */
+axios.interceptors.response.use(response => {
+  return response
+}, error => {
+  return Promise.reject(error)
+})
+
 new Vue({
   router,
   render: h => h(App)

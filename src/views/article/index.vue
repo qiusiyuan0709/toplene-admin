@@ -115,6 +115,17 @@ export default {
       }
     }
   },
+  created () {
+    this.$http({
+      method: 'GET',
+      url: '/articles',
+      headers: { // 自定义请求头
+        // Authorization: `Bearer ${userInfo.token}` // 注意 Bearer 和 token之间要有空格
+      }
+    }).then(res => {
+      console.log(res)
+    })
+  },
   methods: {
     onSubmit () {
       console.log('submit!')
