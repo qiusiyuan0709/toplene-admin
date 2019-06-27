@@ -28,7 +28,7 @@
                         placeholder="验证码"></el-input>
             </el-col>
             <el-col :span="10"
-                    :offset="2">
+                    :offset="4">
               <!-- <el-button @click="handleSendCode">获取验证码</el-button> -->
               <el-button @click="handleSendCode"
                          :disabled="!!codeTimer || codeLoading">
@@ -104,10 +104,12 @@ export default {
       this.loginLoading = true
       axios({
         method: 'POST',
-        url: 'http://ttapi.research.itcast.cn/mp/v1_0/authorizations',
+        url: 'http://toutiao.course.itcast.cn/mp/v1_0/authorizations',
         data: this.form
       }).then(res => { // >= 200 < 400 的状态码都会进入这里
+        // 登录成功，将接口返回的用户信息数据放到本地存储
         window.localStorage.setItem('user_info', JSON.stringify(res.data.data))
+
         // Element 提供的 Message 消息提示组件，这也是组件调用的一种方式
         this.$message({
           message: '登录成功',

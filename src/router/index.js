@@ -36,6 +36,6 @@ router.beforeEach((to, from, next) => {
 })
 
 router.afterEach((to, from) => {
-  nprogress.down()
+  nprogress.done()
 })
 export default router
