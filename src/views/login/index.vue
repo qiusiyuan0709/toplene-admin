@@ -54,7 +54,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+
 import '@/vendor/gt' // gt.js 会向全局 window 暴露一个函数 initGeetest
 const initCodeSeconds = 10
 
@@ -102,9 +102,9 @@ export default {
 
     submitLogin () {
       this.loginLoading = true
-      axios({
+      this.$http({
         method: 'POST',
-        url: 'http://ttapi.research.itcast.cn/mp/v1_0/authorizations',
+        url: '/authorizations',
         data: this.form
       }).then(res => { // >= 200 < 400 的状态码都会进入这里
         // 登录成功，将接口返回的用户信息数据放到本地存储
@@ -168,9 +168,9 @@ export default {
       // 初始化验证码期间，禁用按钮的点击状态
       this.codeLoading = true
 
-      axios({
+      this.$http({
         method: 'GET',
-        url: `http://ttapi.research.itcast.cn/mp/v1_0/captchas/${this.form.mobile}`
+        url: `/captchas/${this.form.mobile}`
       }).then(res => {
         const data = res.data.data
         window.initGeetest({
@@ -196,9 +196,9 @@ export default {
               geetest_validate: validate } =
               captchaObj.getValidate()
             //  调用 获取短信验证码（极验 API2）接口， 发送短信
-            axios({
+            this.$http({
               method: '',
-              url: `http://ttapi.research.itcast.cn/mp/v1_0/sms/codes/${this.form.mobile}`,
+              url: `/sms/codes/${this.form.mobile}`,
               params: {
                 challenge,
                 seccode,
