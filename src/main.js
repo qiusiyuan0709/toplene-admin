@@ -29,7 +29,9 @@ Vue.config.productionTip = false
 axios.interceptors.request.use(
   config => {
     const userInfo = JSON.parse(window.localStorage.getItem('user_info'))
-    config.header.Authorization = `Bearer ${userInfo.token}`
+    if (userInfo) {
+      config.headers.Authorization = `Bearer ${userInfo.token}`
+    }
     return config
   },
   error => {
@@ -46,6 +48,15 @@ axios.interceptors.response.use(
     return response.data.data
   },
   error => {
+    const status = error.response.status
+    if (status === 401) {
+      // 务必删除本地存储中的用户信息数据
+      window.localStorage.removeItem('user_info')
+      // 跳转到登陆页面
+      router.push({
+        name: 'login'
+      })
+    }
     return Promise.reject(error)
   }
 )
