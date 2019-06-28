@@ -48,6 +48,7 @@ axios.interceptors.response.use(
     return response.data.data
   },
   error => {
+    // 400的状态码会进入这里
     const status = error.response.status
     if (status === 401) {
       // 务必删除本地存储中的用户信息数据

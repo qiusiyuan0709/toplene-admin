@@ -54,26 +54,51 @@
 
       <!-- table 表格 -->
       <el-table class="list-table"
-                :data="tableData"
+                :data="articles"
                 style="width: 100%">
-        <el-table-column prop="date"
-                         label="日期"
+        <el-table-column prop="cover.images[0]"
+                         label="封面"
+                         width="60">
+          <!-- 表格列默认只能输出文本，如果需要自定义里面的内容，则需要 -->
+          <!--
+            slot-scope 是插槽作用域，现在先听个名词，你要知道的是值 scope 是起的一个名字
+            scope 中有个成员叫 row
+            也就是说 scope.row 就是当前的遍历项对象
+            自定义列模板，el-table-column 的 prop 就没有意义了
+          -->
+          <template slot-scope="scope">
+            <img width="30"
+                 :src="scope.row.cover.images[0]">
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="title"
+                         label="标题"
                          width="180">
         </el-table-column>
-        <el-table-column prop="name"
-                         label="姓名"
+
+        <el-table-column prop="pubdate"
+                         label="发布日期"
                          width="180">
         </el-table-column>
-        <el-table-column prop="address"
-                         label="地址">
+
+        <el-table-column prop="status"
+                         label="状态">
         </el-table-column>
       </el-table>
       <!-- table 表格 -->
 
       <!-- 数据分页 -->
+      <!--
+        一：分多少页
+          每页多大，默认是10条每页，我们的接口如果没有指定每页条数，则默认也是按照每页10条返回数据
+          有多少条数据
+        二：页面改变加载对应的页码数据
+       -->
       <el-pagination background
                      layout="prev, pager, next"
-                     :total="1000">
+                     :total="totalCount"
+                     @current-change="handleCurrentChange">
       </el-pagination>
       <!-- 数据分页 -->
     </el-card>
@@ -85,23 +110,7 @@ export default {
   name: 'ArticleList',
   data () {
     return {
-      tableData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄'
-      }, {
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1516 弄'
-      }],
+      articles: [], // 列表数据
       form: {
         name: '',
         region: '',
@@ -112,23 +121,34 @@ export default {
         resource: '',
         desc: '',
         value1: ''
-      }
+      },
+      totalCount: 0
     }
   },
   created () {
-    this.$http({
-      method: 'GET',
-      url: '/articles',
-      headers: { // 自定义请求头
-        // Authorization: `Bearer ${userInfo.token}` // 注意 Bearer 和 token之间要有空格
-      }
-    }).then(data => {
-      console.log(data)
-    })
+    this.loadArticles()
   },
   methods: {
+    loadArticles (page = 1) {
+      this.$http({
+        method: 'GET',
+        url: '/articles',
+        params: {
+          page, // 请求数据的页码，不传默认为 1
+          per_page: 10 // 请求数据的每页大小，不传默认为10
+        }
+      }).then(data => {
+        this.articles = data.results // 列表数据
+        this.totalCount = data.total_count // 总记录数
+      })
+    },
     onSubmit () {
       console.log('submit!')
+    },
+
+    handleCurrentChange (page) {
+      // 当页码发生改变的时候，请求该页码对应的数据
+      this.loadArticles(page)
     }
   }
 }
@@ -140,7 +160,5 @@ export default {
 }
 .list-table {
   margin-bottom: 30px;
-}
-.list-card {
 }
 </style>
