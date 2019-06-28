@@ -55,7 +55,8 @@
       <!-- table 表格 -->
       <el-table class="list-table"
                 :data="articles"
-                style="width: 100%">
+                style="width: 100%"
+                v-loading="articleLoading">
         <el-table-column prop="cover.images[0]"
                          label="封面"
                          width="60">
@@ -98,6 +99,7 @@
       <el-pagination background
                      layout="prev, pager, next"
                      :total="totalCount"
+                     :disabled="articleLoading"
                      @current-change="handleCurrentChange">
       </el-pagination>
       <!-- 数据分页 -->
@@ -122,7 +124,8 @@ export default {
         desc: '',
         value1: ''
       },
-      totalCount: 0
+      totalCount: 0,
+      articleLoading: false
     }
   },
   created () {
@@ -130,6 +133,7 @@ export default {
   },
   methods: {
     loadArticles (page = 1) {
+      this.articleLoading = true
       this.$http({
         method: 'GET',
         url: '/articles',
@@ -140,6 +144,7 @@ export default {
       }).then(data => {
         this.articles = data.results // 列表数据
         this.totalCount = data.total_count // 总记录数
+        this.articleLoading = false
       })
     },
     onSubmit () {
