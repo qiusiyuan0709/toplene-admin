@@ -5,8 +5,6 @@
       <div slot="header"
            class="clearfix">
         <span>筛选条件</span>
-        <el-button style="float: right; padding: 3px 0"
-                   type="text">操作按钮</el-button>
       </div>
 
       <el-form ref="form"
@@ -48,8 +46,6 @@
       <div slot="header"
            class="clearfix">
         <span>共找到15条符合条件的内容</span>
-        <el-button style="float: right; padding: 3px 0"
-                   type="text">操作按钮</el-button>
       </div>
 
       <!-- table 表格 -->
@@ -84,7 +80,20 @@
         </el-table-column>
 
         <el-table-column prop="status"
-                         label="状态">
+                         label="状态"
+                         width="180">
+        </el-table-column>
+
+        <el-table-column prop="status"
+                         label="修改"
+                         width="180">
+          <template slot-scope="scope">
+            <el-button type="success"
+                       plain>修改</el-button>
+            <el-button type="danger"
+                       plain
+                       @click="handleDelete(scope.row)">删除</el-button>
+          </template>
         </el-table-column>
       </el-table>
       <!-- table 表格 -->
@@ -154,6 +163,15 @@ export default {
     handleCurrentChange (page) {
       // 当页码发生改变的时候，请求该页码对应的数据
       this.loadArticles(page)
+    },
+
+    handleDelete (article) {
+      this.$http({
+        method: 'DELETE',
+        url: `/articles/${article.id}`
+      }).then(data => {
+        console.log(data)
+      })
     }
   }
 }
