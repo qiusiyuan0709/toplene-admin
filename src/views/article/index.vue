@@ -84,7 +84,7 @@
           <template slot-scope="scope">
             <el-tag :type="statTypes[scope.row.status].type">{{ statTypes[scope.row.status].label }}</el-tag>
           </template>
-          <el-tag type="success">标签一</el-tag>
+          <el-tag gittype="success">标签一</el-tag>
         </el-table-column>
 
         <el-table-column label="操作">
