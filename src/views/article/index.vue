@@ -79,14 +79,15 @@
                          width="180">
         </el-table-column>
 
-        <el-table-column prop="status"
-                         label="状态"
+        <el-table-column label="状态"
                          width="180">
+          <template slot-scope="scope">
+            <el-tag :type="statTypes[scope.row.status].type">{{ statTypes[scope.row.status].label }}</el-tag>
+          </template>
+          <el-tag type="success">标签一</el-tag>
         </el-table-column>
 
-        <el-table-column prop="status"
-                         label="修改"
-                         width="180">
+        <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button type="success"
                        plain>修改</el-button>
@@ -134,7 +135,30 @@ export default {
         value1: ''
       },
       totalCount: 0,
-      articleLoading: false
+      articleLoading: false,
+      page: 1,
+      statTypes: [
+        {
+          type: 'info',
+          label: '草稿'
+        },
+        {
+          type: '',
+          label: '待审核'
+        },
+        {
+          type: 'warning',
+          label: '审核失败'
+        },
+        {
+          type: 'seccess',
+          label: '审核通过'
+        },
+        {
+          type: 'danger',
+          label: '已删除'
+        }
+      ]
     }
   },
   created () {
