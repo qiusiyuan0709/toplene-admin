@@ -8,7 +8,7 @@
       </div>
 
       <el-form ref="form"
-               :model="form"
+               :model="filterParams"
                label-width="80px">
         <el-form-item label="状态">
           <el-radio-group v-model="filterParams.status">
@@ -21,6 +21,8 @@
         <el-form-item label="频道">
           <el-select v-model="filterParams.channel_id"
                      placeholder="请选择活动区域">
+            <el-option label="全部"
+                       value=""></el-option>
             <el-option v-for="item in channels"
                        :key="item.id"
                        :label="item.name"
@@ -109,12 +111,15 @@
         一：分多少页
           每页多大，默认是10条每页，我们的接口如果没有指定每页条数，则默认也是按照每页10条返回数据
           有多少条数据
+          total  总记录数
+          current-page 当前页码，也就是高亮的页码
         二：页面改变加载对应的页码数据
        -->
       <el-pagination background
                      layout="prev, pager, next"
                      :total="totalCount"
                      :disabled="articleLoading"
+                     current-page="page"
                      @current-change="handleCurrentChange">
       </el-pagination>
       <!-- 数据分页 -->
@@ -208,11 +213,13 @@ export default {
     },
 
     onSubmit () {
-      this.loadArticles()
+      this.page = 1 // 让分页组件的页码回到第1页
+      this.loadArticles() // 加载第1页的数据
     },
 
     handleCurrentChange (page) {
       // 当页码发生改变的时候，请求该页码对应的数据
+      this.page = page
       this.loadArticles(page)
     },
 
