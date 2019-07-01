@@ -111,7 +111,7 @@
                      layout="prev, pager, next"
                      :total="totalCount"
                      :disabled="articleLoading"
-                     current-page="page"
+                     :current-page="page"
                      @current-change="handleCurrentChange">
       </el-pagination>
       <!-- 数据分页 -->
