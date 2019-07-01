@@ -16,7 +16,8 @@
       </el-table-column>
       <el-table-column label="允许评论">
         <template slot-scope="scope">
-          <el-switch v-model="scope.row.comment_status"
+          <el-switch :disabled="scope.row.changeLoading"
+                     v-model="scope.row.comment_status"
                      active-color="#13ce66"
                      inactive-color="#ff4949"
                      @change="handleChangeCommentStatus(scope.row)">
@@ -47,11 +48,15 @@ export default {
           response_type: 'comment'
         }
       }).then(data => {
+        data.results.forEach(item => {
+          item.changeLoading = false
+        })
         this.articles = data.results
       })
     },
 
     handleChangeCommentStatus (item) {
+      item.changeLoading = true // 禁用开关的点击状态
       this.$http({
         method: 'PUT',
         url: '/comments/status',
@@ -66,8 +71,12 @@ export default {
           type: 'success',
           message: `${item.comment_status ? '启用' : '关闭'}评论状态成功`
         })
+        item.changeLoading = false // 启用开关的点击状态
       }).catch(err => {
         console.log(err)
+        item.changeLoading = false // 启用开关的点击状态
+        item.comment_status = !item.comment_status // 启用开关的点击状态
+
         this.$message.error('修改评论状态失败')
       })
     }
