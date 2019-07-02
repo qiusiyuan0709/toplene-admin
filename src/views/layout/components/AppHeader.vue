@@ -9,8 +9,8 @@
                src="http://toutiao.meiduo.site/Fkj6tQi3xJwVXi1u2swCElotfdCi">
           17683753439 -->
           <img width="30"
-               :src="userInfo.photo">
-          {{ userInfo.name }}
+               :src="$store.state.user.photo">
+          {{ $store.state.user.name }}
           <i class="el-icon-arrow-down el-icon--right"></i>
         </span>
         <el-dropdown-menu slot="dropdown">
@@ -28,11 +28,11 @@ export default {
   name: 'AppHeader',
   data () {
     return {
-      userInfo: {}
+      // userInfo: {}
     }
   },
   created () {
-    this.userInfo = JSON.parse(window.localStorage.getItem('user_info'))
+    // this.userInfo = JSON.parse(window.localStorage.getItem('user_info'))
   },
   methods: {
     handleLogout () {

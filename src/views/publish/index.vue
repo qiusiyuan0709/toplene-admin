@@ -3,12 +3,14 @@
     <div slot="header"
          class="header">
       <span>{{ isEdit ? '更新文章' : '发布文章' }}</span>
-      <el-button type="success"
-                 @click="handlePublish(false)"
-                 :loading="publishLoading">{{ isEdit ? '更新' : '发布' }}</el-button>
-      <el-button type="primary"
-                 @click=" handlePublish(true)"
-                 :loading="publishLoading">存入草稿</el-button>
+      <div>
+        <el-button type="success"
+                   @click="handlePublish(false)"
+                   :loading="publishLoading">{{ isEdit ? '更新' : '发布' }}</el-button>
+        <el-button type="primary"
+                   @click=" handlePublish(true)"
+                   :loading="publishLoading">存入草稿</el-button>
+      </div>
     </div>
 
     <el-form v-loading="isEdit && editLoading">
