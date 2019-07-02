@@ -4,6 +4,7 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import axios from 'axios'
 import JSONbig from 'json-bigint'
+import store from './store'
 
 import router from './router'
 
@@ -86,5 +87,6 @@ axios.interceptors.response.use(
 
 new Vue({
   router,
+  store,
   render: h => h(App)
 }).$mount('#app')
