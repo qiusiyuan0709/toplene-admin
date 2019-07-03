@@ -90,19 +90,36 @@ export default {
     }
   },
 
+  watch: {
+    $route (to, from) {
+      // 如果你是从更新页面来的
+      if (from.name === 'publish-edit') {
+        this.articleForm = {
+          title: '', // 标题
+          content: '', // 内容
+          cover: { // 封面
+            type: 0, // 封面类型 -1:自动  0-无图  1-1张 3-3张
+            images: [] // 图片链接
+          },
+          channel_id: '' // 频道
+        }
+      }
+    }
+  },
+
   /**
    * 监视器，我们可以监视组件实例中的成员
    * 当成员发生改变的时候，监视函数会被调用
    */
-  watch: {
-    articleForm: {
-      handler () { // 当被监视数据发生改变时会被调用
-        // 如果是第1次编辑更新导致数据的改变，不要让this.forDirty 为 true
-        this.formDirty = true
-      }
-    }, // 当被监视数据发生改变的时候会被调用
-    deep: true // 对象，数组类型需要配置深度监视，如果是普通数据不需要
-  },
+  // watch: {
+  //   articleForm: {
+  //     handler () { // 当被监视数据发生改变时会被调用
+  //       // 如果是第1次编辑更新导致数据的改变，不要让this.forDirty 为 true
+  //       this.formDirty = true
+  //     }
+  //   }, // 当被监视数据发生改变的时候会被调用
+  //   deep: true // 对象，数组类型需要配置深度监视，如果是普通数据不需要
+  // },
 
   computed: {
     editor () {
