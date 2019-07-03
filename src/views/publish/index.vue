@@ -84,7 +84,21 @@ export default {
       },
       editorOption: {}, // 富文本编辑器相关参数选项
       editLoading: false,
-      publishLoading: false
+      publishLoading: false,
+      formDirty: false
+    }
+  },
+
+  /**
+   * 监视器，我们可以监视组件实例中的成员
+   * 当成员发生改变的时候，监视函数会被调用
+   */
+  watch: {
+    articleForm: {
+      handler () {
+        this.formDirty = true
+      }, // 当被监视数据发生改变的时候会被调用
+      deep: true // 对象，数组类型需要配置深度监视，如果是普通数据不需要
     }
   },
 
@@ -107,6 +121,7 @@ export default {
   mounted () {
     console.log('this is current quill instance object', this.editor)
   },
+
   methods: {
     loadArticle () {
       this.editLoading = true
@@ -178,6 +193,31 @@ export default {
       }).then(function () {
 
       })
+    }
+  },
+
+  /**
+   * 当要从当前导航到另一个路由的时候被触发
+   * 我们可以在这里控制路由离开的行为
+   * 例如当前页面如果有未保存的数据，我们就提示用户
+   * to 要去哪里
+   * from 来自哪里
+   * next 就是允许通过的方法
+   */
+  beforeRouteLeave (to, from, next) {
+    // 如果表单没有被用户修改过，则让导航直接通过
+    if (!this.formDirty) {
+      return next()
+    }
+
+    // 如果当前页面有为保存的数据
+    const answer = window.confirm('当前有未保存的数据，确认离开吗？')
+    if (answer) {
+      // 正常往后进行导航
+      next()
+    } else {
+      // 取消当前导航
+      next(false)
     }
   }
 }
