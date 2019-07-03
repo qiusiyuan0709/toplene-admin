@@ -48,6 +48,7 @@ export default {
           response_type: 'comment'
         }
       }).then(data => {
+        console.log(data)
         data.results.forEach(item => {
           item.changeLoading = false
         })

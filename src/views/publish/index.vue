@@ -85,7 +85,8 @@ export default {
       editorOption: {}, // 富文本编辑器相关参数选项
       editLoading: false,
       publishLoading: false,
-      formDirty: false
+      formDirty: false,
+      firstEditData: false
     }
   },
 
@@ -95,11 +96,12 @@ export default {
    */
   watch: {
     articleForm: {
-      handler () {
+      handler () { // 当被监视数据发生改变时会被调用
+        // 如果是第1次编辑更新导致数据的改变，不要让this.forDirty 为 true
         this.formDirty = true
-      }, // 当被监视数据发生改变的时候会被调用
-      deep: true // 对象，数组类型需要配置深度监视，如果是普通数据不需要
-    }
+      }
+    }, // 当被监视数据发生改变的时候会被调用
+    deep: true // 对象，数组类型需要配置深度监视，如果是普通数据不需要
   },
 
   computed: {
@@ -116,6 +118,12 @@ export default {
 
   created () {
     this.isEdit && this.loadArticle()
+
+    // 如果是发布页面，则直接开启监视
+    if (this.$route.name === 'publish') {
+      // 开启监视
+      this.watchForm()
+    }
   },
 
   mounted () {
@@ -134,6 +142,19 @@ export default {
         // 这个数据非用户修改的数据，所以不要让其变脏
         this.articleForm = data
         this.editLoading = false
+        // this.firstEditData = true
+        // 如果你此时去操作上面数据驱动视图的更新，此时的拿到的 DOM 是更新前的
+        // 如果你需要在数据驱改变影响视图更新之后做一些 DOM 操作，可以把代码写到 this.$nextTick()
+        // 数据的修改并不是立即触发视图的更新的
+        // 这个监视器的监视先于真正的数据修改执行
+        // 官方文档也没有对应的说明，只是通过实际代码观察到的效果
+        // 这种代码的执行，即便上面先修改数据，后面去监视也会被监视到
+        // this.watchForm()
+        // Vue 提供了这样的一个 API，简单理解就是延时调用
+        this.$nextTick(() => {
+          // 更新数据加载好以后，开启监视
+          this.watchForm()
+        })
       }).catch(err => {
         console.log(err)
         this.$message.error('加载文章详情失败')
@@ -190,8 +211,17 @@ export default {
       }).catch(err => {
         console.log(err)
         this.$message.error('发布失败')
-      }).then(function () {
+      })
+    },
 
+    watchForm () {
+      const unWatch = this.$watch('articleForm', function () {
+        console.log('watchForm')
+        this.formDirty = true
+        // 关闭监视器
+        unWatch()
+      }, {
+        deep: true
       })
     }
   },
